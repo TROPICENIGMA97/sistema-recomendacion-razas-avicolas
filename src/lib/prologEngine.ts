@@ -4,7 +4,8 @@ export interface BreedInfo {
   nombre: string;
   descripcion: string;
   proposito: string;
-  toleranciaCalor: string;
+  climaOptimo: string;
+  espacioReq: string;
   resistencia: string;
   facilidad: string;
   costo: string;
@@ -23,9 +24,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   leghorn: {
     nombre: "Leghorn Blanca",
     descripcion:
-      "Raza especializada en produccion de huevo blanco. Muy eficiente con bajo consumo de alimento. Excelente adaptacion al calor de Veracruz. Temperamento activo, ideal para produccion comercial de huevo.",
+      "Raza especializada en huevo blanco. Alta eficiencia con bajo consumo de alimento. Ideal para climas calidos secos. Activa y productiva.",
     proposito: "Huevo",
-    toleranciaCalor: "Alta",
+    climaOptimo: "Calido seco",
+    espacioReq: "Mediano",
     resistencia: "Media",
     facilidad: "Media",
     costo: "Medio",
@@ -35,9 +37,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   rhode_island_red: {
     nombre: "Rhode Island Red",
     descripcion:
-      "Raza de doble proposito muy versatil y adaptable al clima calido. Excelente opcion para pequenos productores de Cuichapa. Temperamento tranquilo, muy facil de manejar y resistente a enfermedades tropicales.",
+      "Raza de doble proposito muy versatil. Excelente para clima calido humedo como Cuichapa. Tranquila, resistente y facil de manejar para pequenos productores.",
     proposito: "Doble proposito",
-    toleranciaCalor: "Alta",
+    climaOptimo: "Calido humedo",
+    espacioReq: "Mediano",
     resistencia: "Alta",
     facilidad: "Facil",
     costo: "Medio",
@@ -47,9 +50,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   cuello_desnudo: {
     nombre: "Cuello Desnudo",
     descripcion:
-      "Perfectamente adaptada al calor veracruzano. Su cuello sin plumas le ayuda a regular la temperatura corporal. Muy resistente a enfermedades, bajo costo de adquisicion y minimo mantenimiento. Ideal para Cuichapa.",
+      "Perfectamente adaptada al calor humedo veracruzano. Su cuello desnudo regula la temperatura corporal. Muy resistente, bajo costo, espacio minimo.",
     proposito: "Doble proposito",
-    toleranciaCalor: "Muy alta",
+    climaOptimo: "Calido humedo",
+    espacioReq: "Pequeno",
     resistencia: "Muy alta",
     facilidad: "Facil",
     costo: "Bajo",
@@ -59,9 +63,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   new_hampshire: {
     nombre: "New Hampshire",
     descripcion:
-      "Especializada en produccion de carne con buena adaptacion al calor. Crecimiento rapido y buen temperamento para cria familiar. Buena opcion para venta de carne en mercados locales de Cuichapa.",
+      "Especializada en carne con buena adaptacion al calor. Crecimiento rapido, buen temperamento. Requiere espacio amplio para desarrollo optimo.",
     proposito: "Carne",
-    toleranciaCalor: "Alta",
+    climaOptimo: "Calido seco",
+    espacioReq: "Grande",
     resistencia: "Alta",
     facilidad: "Facil",
     costo: "Medio",
@@ -71,9 +76,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   australorp: {
     nombre: "Australorp",
     descripcion:
-      "Raza australiana con record mundial de produccion de huevo cafe. Muy tranquila y facil de manejar, ideal para principiantes. Requiere algo de sombra en dias muy calurosos pero produce excelentes resultados.",
+      "Record mundial en produccion de huevo cafe. Muy tranquila y facil de manejar. Optima para climas templados. Requiere sombra en dias calurosos.",
     proposito: "Huevo",
-    toleranciaCalor: "Media",
+    climaOptimo: "Templado",
+    espacioReq: "Mediano",
     resistencia: "Alta",
     facilidad: "Facil",
     costo: "Medio",
@@ -83,9 +89,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   broiler: {
     nombre: "Pollo de Engorda (Broiler)",
     descripcion:
-      "Ave de engorda comercial lista en 6-7 semanas. Maxima produccion de carne pero requiere manejo intensivo, buena alimentacion balanceada y atencion veterinaria constante. Excelente retorno de inversion.",
+      "Ave de engorda lista en 6-7 semanas. Maxima produccion de carne en clima controlado. Requiere inversion alta y manejo tecnico especializado.",
     proposito: "Carne",
-    toleranciaCalor: "Baja",
+    climaOptimo: "Templado",
+    espacioReq: "Grande",
     resistencia: "Baja",
     facilidad: "Media",
     costo: "Alto",
@@ -95,9 +102,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   isa_brown: {
     nombre: "ISA Brown",
     descripcion:
-      "Hibrido comercial de alta produccion de huevo cafe (hasta 300 huevos/ano). Muy rentable pero requiere buena nutricion y cuidados constantes. Excelente opcion para produccion comercial en Veracruz.",
+      "Hibrido comercial de alta produccion de huevo cafe (hasta 300/ano). Muy rentable. Requiere buena nutricion y cuidados. Ideal para produccion intensiva.",
     proposito: "Huevo",
-    toleranciaCalor: "Alta",
+    climaOptimo: "Calido seco",
+    espacioReq: "Pequeno",
     resistencia: "Media",
     facilidad: "Facil",
     costo: "Alto",
@@ -107,9 +115,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   criollo: {
     nombre: "Gallina Criolla",
     descripcion:
-      "Aves criollas locales perfectamente adaptadas al clima y condiciones de Cuichapa. Maxima rusticidad, minimo costo y cero dependencia de insumos especializados. Ideal para autoconsumo familiar y primeros pasos en avicultura.",
+      "Aves locales perfectamente adaptadas al clima humedo de Cuichapa. Maxima rusticidad, costo minimo, cero dependencia de insumos. Ideal para autoconsumo.",
     proposito: "Doble proposito",
-    toleranciaCalor: "Muy alta",
+    climaOptimo: "Calido humedo",
+    espacioReq: "Pequeno",
     resistencia: "Muy alta",
     facilidad: "Muy facil",
     costo: "Muy bajo",
@@ -119,9 +128,10 @@ export const BREED_DATA: Record<string, BreedInfo> = {
   plymouth_rock: {
     nombre: "Plymouth Rock",
     descripcion:
-      "Raza clasica americana de doble proposito. Temperamento tranquilo, productiva y adaptable. Perfecta para la granja familiar veracruzana. Buena produccion tanto de huevo como de carne.",
+      "Raza clasica de doble proposito. Temperamento tranquilo y adaptable. Optima para climas templados. Buena produccion de huevo y carne en granja familiar.",
     proposito: "Doble proposito",
-    toleranciaCalor: "Media",
+    climaOptimo: "Templado",
+    espacioReq: "Mediano",
     resistencia: "Alta",
     facilidad: "Facil",
     costo: "Medio",
@@ -146,13 +156,9 @@ function extractBindings(answer: any): { raza: string; total: number } | null {
     const totalTerm = links["Total"];
     if (!razaTerm || !totalTerm) return null;
     const raza =
-      razaTerm.id !== undefined
-        ? String(razaTerm.id)
-        : String(razaTerm.value ?? "");
+      razaTerm.id !== undefined ? String(razaTerm.id) : String(razaTerm.value ?? "");
     const total =
-      totalTerm.value !== undefined
-        ? Number(totalTerm.value)
-        : Number(totalTerm.id ?? 0);
+      totalTerm.value !== undefined ? Number(totalTerm.value) : Number(totalTerm.id ?? 0);
     if (!raza || isNaN(total)) return null;
     return { raza, total };
   } catch {
@@ -162,9 +168,10 @@ function extractBindings(answer: any): { raza: string; total: number } | null {
 
 export async function getRecommendations(
   objetivo: string,
+  clima: string,
+  espacio: string,
   presupuesto: string,
-  experiencia: string,
-  alimentacion: string
+  experiencia: string
 ): Promise<RecommendResult[]> {
   const pl = await getProlog();
 
@@ -173,7 +180,7 @@ export async function getRecommendations(
 
     session.consult(PROLOG_CODE, {
       success: () => {
-        const queryStr = `recomendar(${objetivo}, ${presupuesto}, ${experiencia}, ${alimentacion}, Raza, Total).`;
+        const queryStr = `recomendar(${objetivo}, ${clima}, ${espacio}, ${presupuesto}, ${experiencia}, Raza, Total).`;
         session.query(queryStr, {
           success: () => {
             const results: RecommendResult[] = [];
@@ -198,9 +205,7 @@ export async function getRecommendations(
                 fail: () => {
                   resolve(results.sort((a, b) => b.total - a.total));
                 },
-                error: (err: any) => {
-                  reject(new Error(String(err)));
-                },
+                error: (err: any) => reject(new Error(String(err))),
                 limit: () => {
                   resolve(results.sort((a, b) => b.total - a.total));
                 },
