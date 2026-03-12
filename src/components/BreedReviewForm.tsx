@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { BREED_DATA } from "@/lib/prologEngine";
 import StarRating from "./StarRating";
+import BreedImage from "./BreedImage";
 
 interface Review {
   id: string;
@@ -112,29 +113,33 @@ export default function BreedReviewForm({
           Selecciona la raza que criaste
         </label>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-          {RAZAS.map(({ key, nombre, emoji }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setRaza(key)}
-              className={`flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 text-center transition-all
-                ${
-                  raza === key
-                    ? "border-campo-600 bg-campo-50 shadow-sm"
-                    : "border-gray-200 hover:border-campo-300 hover:bg-gray-50"
-                }`}
-            >
-              <span className="text-2xl">{emoji}</span>
-              <span className="text-xs font-semibold text-campo-900 leading-tight line-clamp-2">
-                {nombre.split(" ").slice(0, 2).join(" ")}
-              </span>
-              {existingRazas.includes(key) && (
-                <span className="text-xs bg-tierra-200 text-tierra-800 px-1 rounded font-medium">
-                  Editada
-                </span>
-              )}
-            </button>
-          ))}
+          {RAZAS.map(({ key, nombre, emoji }) => {
+            const b = BREED_DATA[key];
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setRaza(key)}
+                className={`flex flex-col rounded-xl border-2 overflow-hidden text-center transition-all
+                  ${raza === key
+                    ? "border-campo-600 shadow-md ring-2 ring-campo-300"
+                    : "border-gray-200 hover:border-campo-300"
+                  }`}
+              >
+                <BreedImage imagen={b.imagen} nombre={nombre} emoji={emoji} size="sm" className="w-full" />
+                <div className="p-1.5 bg-white">
+                  <span className="text-xs font-bold text-campo-900 leading-tight line-clamp-2 block">
+                    {nombre.split(" ").slice(0, 2).join(" ")}
+                  </span>
+                  {existingRazas.includes(key) && (
+                    <span className="text-xs bg-tierra-200 text-tierra-800 px-1 rounded font-medium mt-0.5 block">
+                      Editada
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

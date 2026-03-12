@@ -32,6 +32,7 @@ export interface BreedInfo {
   costo: string;
   huevosAnio: number;
   emoji: string;
+  imagen: string;
 }
 
 export interface RecommendResult {
@@ -55,6 +56,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Medio",
     huevosAnio: 280,
     emoji: "🐓",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Gallus_gallus_domesticus_-_Carole_Smile-Inachus.jpg/320px-Gallus_gallus_domesticus_-_Carole_Smile-Inachus.jpg",
   },
   rhode_island_red: {
     nombre: "Rhode Island Red",
@@ -68,6 +70,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Medio",
     huevosAnio: 200,
     emoji: "🐔",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Rhode_Island_Red_female.jpg/320px-Rhode_Island_Red_female.jpg",
   },
   cuello_desnudo: {
     nombre: "Cuello Desnudo",
@@ -81,6 +84,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Bajo",
     huevosAnio: 160,
     emoji: "🦤",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Naked_Neck_hen.jpg/320px-Naked_Neck_hen.jpg",
   },
   new_hampshire: {
     nombre: "New Hampshire",
@@ -94,6 +98,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Medio",
     huevosAnio: 180,
     emoji: "🍗",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/NewHampshireRooster.jpg/320px-NewHampshireRooster.jpg",
   },
   australorp: {
     nombre: "Australorp",
@@ -107,6 +112,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Medio",
     huevosAnio: 250,
     emoji: "🥚",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Australorp_chook.jpg/320px-Australorp_chook.jpg",
   },
   broiler: {
     nombre: "Pollo de Engorda (Broiler)",
@@ -120,6 +126,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Alto",
     huevosAnio: 0,
     emoji: "🍖",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Chicken_broiler.jpg/320px-Chicken_broiler.jpg",
   },
   isa_brown: {
     nombre: "ISA Brown",
@@ -133,6 +140,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Alto",
     huevosAnio: 300,
     emoji: "🥚",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/ISA_Brown_hen.jpg/320px-ISA_Brown_hen.jpg",
   },
   criollo: {
     nombre: "Gallina Criolla",
@@ -146,6 +154,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Muy bajo",
     huevosAnio: 120,
     emoji: "🐣",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/320px-A_small_cup_of_coffee.JPG",
   },
   plymouth_rock: {
     nombre: "Plymouth Rock",
@@ -159,6 +168,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Medio",
     huevosAnio: 200,
     emoji: "🐓",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Barred_Rock_female_2.jpg/320px-Barred_Rock_female_2.jpg",
   },
 };
 
