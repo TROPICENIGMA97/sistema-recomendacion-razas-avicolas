@@ -10,9 +10,14 @@ export function createClient() {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (list) =>
-          list.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          ),
+          list.forEach(({ name, value, options }) => {
+            try {
+              cookieStore.set(name, value, options);
+            } catch {
+              // Server Components no pueden setear cookies;
+              // el middleware se encarga del refresco de tokens
+            }
+          }),
       },
     }
   );

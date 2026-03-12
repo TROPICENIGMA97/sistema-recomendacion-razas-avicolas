@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -10,25 +10,27 @@ interface Props {
 }
 
 export default function NavBar({ email, nombre }: Props) {
-  const router   = useRouter();
   const pathname = usePathname();
-  const supabase = createClient();
 
   async function logout() {
+    const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+    window.location.href = "/login";
   }
 
   const navLink = (href: string, label: string) => {
-    const active = pathname === href || pathname.startsWith(href + "/");
+    const active =
+      href === "/dashboard"
+        ? pathname === "/dashboard"
+        : pathname === href || pathname.startsWith(href + "/");
     return (
       <Link
         href={href}
         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors
-          ${active
-            ? "bg-white/20 text-white"
-            : "text-campo-200 hover:text-white hover:bg-white/10"
+          ${
+            active
+              ? "bg-white/20 text-white"
+              : "text-campo-200 hover:text-white hover:bg-white/10"
           }`}
       >
         {label}
@@ -39,7 +41,7 @@ export default function NavBar({ email, nombre }: Props) {
   return (
     <header className="bg-campo-800 text-white shadow-md sticky top-0 z-20">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
-        <Link href="/dashboard" className="flex items-center gap-2 mr-2">
+        <Link href="/dashboard" className="flex items-center gap-2 mr-2 shrink-0">
           <span className="text-2xl">🐔</span>
           <div className="hidden sm:block">
             <p className="text-sm font-black leading-tight">Sistema Avicola</p>
