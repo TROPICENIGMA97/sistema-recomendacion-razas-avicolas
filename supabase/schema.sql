@@ -27,8 +27,32 @@ create index if not exists idx_recommendations_user_id
 alter table public.recommendations enable row level security;
 
 drop policy if exists "usuarios_crud_propio" on public.recommendations;
-create policy "usuarios_crud_propio"
+drop policy if exists "usuarios_select_propio" on public.recommendations;
+drop policy if exists "usuarios_insert_propio" on public.recommendations;
+drop policy if exists "usuarios_update_propio" on public.recommendations;
+drop policy if exists "usuarios_delete_propio" on public.recommendations;
+
+create policy "usuarios_select_propio"
   on public.recommendations
-  for all
-  using  (auth.uid() = user_id)
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "usuarios_insert_propio"
+  on public.recommendations
+  for insert
+  to authenticated
   with check (auth.uid() = user_id);
+
+create policy "usuarios_update_propio"
+  on public.recommendations
+  for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "usuarios_delete_propio"
+  on public.recommendations
+  for delete
+  to authenticated
+  using (auth.uid() = user_id);
