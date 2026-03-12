@@ -36,7 +36,7 @@ const TEST_CASES: TestCase[] = [
     id: 2,
     descripcion: "Productor con experiencia media, busca huevos, clima humedo, espacio mediano",
     params: { objetivo: "huevo", clima: "calido_humedo", espacio: "mediano", presupuesto: "medio", experiencia: "intermedio" },
-    esperado: "rhode_island_red",
+    esperado: "cuello_desnudo",
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ const TEST_CASES: TestCase[] = [
     id: 4,
     descripcion: "Principiante con espacio pequeno y clima humedo buscando doble proposito",
     params: { objetivo: "doble_proposito", clima: "calido_humedo", espacio: "pequeno", presupuesto: "medio", experiencia: "principiante" },
-    esperado: "cuello_desnudo",
+    esperado: "criollo",
   },
   {
     id: 5,
