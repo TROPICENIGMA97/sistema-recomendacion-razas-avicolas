@@ -154,7 +154,7 @@ export const BREED_DATA: Record<string, BreedInfo> = {
     costo: "Muy bajo",
     huevosAnio: 120,
     emoji: "🐣",
-    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/320px-A_small_cup_of_coffee.JPG",
+    imagen: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Chicken_in_the_yard.jpg/320px-Chicken_in_the_yard.jpg",
   },
   plymouth_rock: {
     nombre: "Plymouth Rock",

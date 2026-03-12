@@ -74,7 +74,9 @@ export default function BreedReviewForm({
       setComentario("");
       setOpen(false);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al guardar.");
+      const e = err as { message?: string; details?: string; hint?: string };
+      const msg = e?.message || e?.details || "Error al guardar.";
+      setError(`Error: ${msg}`);
     } finally {
       setLoading(false);
     }

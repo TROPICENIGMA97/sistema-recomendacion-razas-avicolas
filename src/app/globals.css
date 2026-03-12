@@ -4,9 +4,11 @@
 
 :root {
   --background: #f6fbf0;
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
   background-color: var(--background);
   color: #1a2e1a;
+  font-family: var(--font-inter);
 }

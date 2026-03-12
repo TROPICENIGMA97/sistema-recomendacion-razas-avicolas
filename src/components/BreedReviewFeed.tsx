@@ -68,7 +68,7 @@ export default function BreedReviewFeed({ initial, userId, userName }: Props) {
     if (!confirm("Eliminar esta opinion?")) return;
     const supabase = createClient();
     const { error } = await supabase.from("breed_reviews").delete().eq("id", id);
-    if (error) { setOpError("No se pudo eliminar."); return; }
+    if (error) { setOpError(`No se pudo eliminar: ${error.message}`); return; }
     setOpError(null);
     setReviews((prev) => prev.filter((r) => r.id !== id));
   }

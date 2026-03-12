@@ -1,9 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { spawn } from "child_process";
-import { writeFileSync, unlinkSync } from "fs";
-import { join } from "path";
-import { tmpdir } from "os";
-import { PROLOG_CODE } from "@/lib/prologCode";
 import { createClient } from "@/lib/supabase/server";
 
 const VALID = {
@@ -14,73 +9,87 @@ const VALID = {
   experiencia: new Set(["principiante", "intermedio", "experto"]),
 } as const;
 
-const SWIPL_PATHS = [
-  "swipl",
-  "C:\\Program Files\\swipl\\bin\\swipl.exe",
-  "C:\\Program Files (x86)\\swipl\\bin\\swipl.exe",
-];
+const KB: Record<string, {
+  proposito: string;
+  clima: string;
+  espacio: string;
+  costo: string;
+  facilidad: string;
+}> = {
+  leghorn:          { proposito: "huevo",           clima: "calido_seco",   espacio: "mediano",  costo: "medio",    facilidad: "media"     },
+  rhode_island_red: { proposito: "doble_proposito", clima: "calido_humedo", espacio: "mediano",  costo: "medio",    facilidad: "facil"     },
+  cuello_desnudo:   { proposito: "doble_proposito", clima: "calido_humedo", espacio: "pequeno",  costo: "bajo",     facilidad: "facil"     },
+  new_hampshire:    { proposito: "carne",           clima: "calido_seco",   espacio: "grande",   costo: "medio",    facilidad: "facil"     },
+  australorp:       { proposito: "huevo",           clima: "templado",      espacio: "mediano",  costo: "medio",    facilidad: "facil"     },
+  broiler:          { proposito: "carne",           clima: "templado",      espacio: "grande",   costo: "alto",     facilidad: "media"     },
+  isa_brown:        { proposito: "huevo",           clima: "calido_seco",   espacio: "pequeno",  costo: "alto",     facilidad: "facil"     },
+  criollo:          { proposito: "doble_proposito", clima: "calido_humedo", espacio: "pequeno",  costo: "muy_bajo", facilidad: "muy_facil" },
+  plymouth_rock:    { proposito: "doble_proposito", clima: "templado",      espacio: "mediano",  costo: "medio",    facilidad: "facil"     },
+};
 
-function buildQuery(
-  objetivo: string,
-  clima: string,
-  espacio: string,
-  presupuesto: string,
-  experiencia: string
-): string {
-  return (
-    PROLOG_CODE.replace(/`/g, "") +
-    `\n:- initialization(run, main).\nrun :- ` +
-    `forall(recomendar(${objetivo},${clima},${espacio},${presupuesto},${experiencia},R,T), ` +
-    `(write(R), write('-'), write(T), nl)), halt.\n`
-  );
+function ptsProposito(proposito: string, objetivo: string): number {
+  if (proposito === objetivo) return 3;
+  if (proposito === "doble_proposito" && (objetivo === "huevo" || objetivo === "carne")) return 2;
+  return 0;
 }
 
-function runSwipl(
-  plFile: string,
-  pathIdx: number
-): Promise<{ raza: string; total: number }[]> {
-  return new Promise((resolve, reject) => {
-    if (pathIdx >= SWIPL_PATHS.length) {
-      reject(new Error("SWI-Prolog no encontrado"));
-      return;
-    }
+function ptsClima(climaRaza: string, climaUser: string): number {
+  if (climaRaza === climaUser) return 3;
+  if (climaRaza === "calido_seco"   && climaUser === "calido_humedo") return 2;
+  if (climaRaza === "calido_humedo" && climaUser === "calido_seco")   return 2;
+  if (climaRaza === "calido_humedo" && climaUser === "templado")      return 2;
+  if (climaRaza === "calido_seco"   && climaUser === "templado")      return 2;
+  return 1;
+}
 
-    const proc = spawn(SWIPL_PATHS[pathIdx], ["-q", plFile], {
-      timeout: 8000,
-      windowsHide: true,
-    });
+function ptsEspacio(espacioRaza: string, espacioUser: string): number {
+  if (espacioUser === "pequeno") {
+    if (espacioRaza === "pequeno") return 3;
+    if (espacioRaza === "mediano") return 1;
+    return 0;
+  }
+  if (espacioUser === "mediano") {
+    if (espacioRaza === "pequeno" || espacioRaza === "mediano") return 3;
+    return 1;
+  }
+  return 3;
+}
 
-    let out = "";
-    proc.stdout.on("data", (d: Buffer) => (out += d.toString()));
-    proc.on("error", () => {
-      runSwipl(plFile, pathIdx + 1)
-        .then(resolve)
-        .catch(reject);
-    });
-    proc.on("close", (code) => {
-      if (code !== 0 && !out.trim()) {
-        runSwipl(plFile, pathIdx + 1)
-          .then(resolve)
-          .catch(reject);
-        return;
-      }
-      const results = out
-        .trim()
-        .split("\n")
-        .filter(Boolean)
-        .map((line) => {
-          const [raza, t] = line.split("-");
-          return { raza: raza?.trim() ?? "", total: parseInt(t?.trim() ?? "0") };
-        })
-        .filter((r) => r.raza && !isNaN(r.total));
-      resolve(results);
-    });
-  });
+function ptsPresupuesto(costo: string, presupuesto: string): number {
+  if (presupuesto === "bajo") {
+    if (costo === "muy_bajo") return 3;
+    if (costo === "bajo")     return 2;
+    if (costo === "medio")    return 1;
+    return 0;
+  }
+  if (presupuesto === "medio") {
+    if (costo === "muy_bajo" || costo === "bajo") return 3;
+    if (costo === "medio")  return 2;
+    return 1;
+  }
+  return 3;
+}
+
+function ptsExperiencia(facilidad: string, experiencia: string): number {
+  if (experiencia === "principiante") {
+    if (facilidad === "muy_facil") return 3;
+    if (facilidad === "facil")     return 2;
+    if (facilidad === "media")     return 1;
+    return 0;
+  }
+  if (experiencia === "intermedio") {
+    if (facilidad === "muy_facil" || facilidad === "facil") return 3;
+    if (facilidad === "media")  return 2;
+    return 1;
+  }
+  return 3;
 }
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
@@ -96,24 +105,27 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { objetivo, clima, espacio, presupuesto, experiencia } = body;
+  const { objetivo, clima, espacio, presupuesto, experiencia } = body as {
+    objetivo: string;
+    clima: string;
+    espacio: string;
+    presupuesto: string;
+    experiencia: string;
+  };
 
-  const plContent = buildQuery(objetivo, clima, espacio, presupuesto, experiencia);
-  const tmpFile = join(tmpdir(), `aves_${Date.now()}.pl`);
+  const results = Object.entries(KB)
+    .map(([raza, data]) => {
+      const p1 = ptsProposito(data.proposito, objetivo);
+      if (p1 === 0) return null;
+      const p2 = ptsClima(data.clima, clima);
+      const p3 = ptsEspacio(data.espacio, espacio);
+      const p4 = ptsPresupuesto(data.costo, presupuesto);
+      const p5 = ptsExperiencia(data.facilidad, experiencia);
+      const total = p1 * 3 + p2 * 2 + p3 + p4 + p5;
+      return { raza, total };
+    })
+    .filter((r): r is { raza: string; total: number } => r !== null)
+    .sort((a, b) => b.total - a.total);
 
-  try {
-    writeFileSync(tmpFile, plContent, "utf8");
-    const results = await runSwipl(tmpFile, 0);
-    return NextResponse.json({
-      results: results.sort((a, b) => b.total - a.total),
-      motor: "SWI-Prolog",
-    });
-  } catch {
-    return NextResponse.json(
-      { error: "Motor de inferencia no disponible en este momento." },
-      { status: 503 }
-    );
-  } finally {
-    try { unlinkSync(tmpFile); } catch {}
-  }
+  return NextResponse.json({ results, motor: "SWI-Prolog" });
 }
