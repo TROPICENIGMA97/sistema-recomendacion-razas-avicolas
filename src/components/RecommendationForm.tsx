@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { getRecommendations, RecommendResult } from "@/lib/prologEngine";
 import ResultCard from "@/components/ResultCard";
+
+interface Props {
+  userId?: string;
+}
 
 interface Answers {
   objetivo: string;
@@ -78,12 +84,14 @@ const STEPS: {
   },
 ];
 
-export default function RecommendationForm() {
+export default function RecommendationForm({ userId }: Props) {
   const [step, setStep]       = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState<string | null>(null);
   const [results, setResults] = useState<RecommendResult[] | null>(null);
+  const [saving, setSaving]   = useState(false);
+  const [saved, setSaved]     = useState(false);
 
   const current  = STEPS[step];
   const selected = answers[current.key];
@@ -116,11 +124,38 @@ export default function RecommendationForm() {
     }
   }
 
+  async function saveRec() {
+    if (!userId || !results || saved) return;
+    const a = answers as Answers;
+    setSaving(true);
+    try {
+      const supabase = createClient();
+      const { error: dbErr } = await supabase.from("recommendations").insert({
+        user_id:     userId,
+        objetivo:    a.objetivo,
+        clima:       a.clima,
+        espacio:     a.espacio,
+        presupuesto: a.presupuesto,
+        experiencia: a.experiencia,
+        resultados:  results,
+        motor:       results[0]?.motor ?? "tau-prolog",
+        notas:       "",
+      });
+      if (dbErr) throw dbErr;
+      setSaved(true);
+    } catch {
+      setError("No se pudo guardar. Verifique su conexion e intente de nuevo.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   function restart() {
     setAnswers({});
     setStep(0);
     setResults(null);
     setError(null);
+    setSaved(false);
   }
 
   if (loading) {
@@ -166,11 +201,41 @@ export default function RecommendationForm() {
           </div>
         )}
 
-        <div className="text-center pt-2">
-          <button onClick={restart}
-            className="px-6 py-3 rounded-xl bg-campo-600 hover:bg-campo-700 text-white font-semibold transition-colors shadow">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button
+            onClick={restart}
+            className="px-6 py-3 rounded-xl bg-campo-600 hover:bg-campo-700 text-white font-semibold transition-colors shadow"
+          >
             Nueva consulta
           </button>
+
+          {userId && !saved && (
+            <button
+              onClick={saveRec}
+              disabled={saving}
+              className="px-6 py-3 rounded-xl border-2 border-campo-600 text-campo-700 hover:bg-campo-50 disabled:opacity-50 font-semibold transition-colors"
+            >
+              {saving ? "Guardando…" : "Guardar en historial"}
+            </button>
+          )}
+
+          {saved && (
+            <div className="flex items-center gap-3">
+              <span className="text-campo-700 font-semibold text-sm">Guardado</span>
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 rounded-xl bg-tierra-400 hover:bg-tierra-500 text-tierra-900 font-bold text-sm transition-colors"
+              >
+                Ver historial →
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="bg-tierra-100 border border-tierra-300 rounded-xl p-4 text-sm text-tierra-800 text-center">
@@ -183,7 +248,6 @@ export default function RecommendationForm() {
 
   return (
     <div className="space-y-5">
-      {/* Barra de progreso */}
       <div className="flex items-center gap-1.5">
         {STEPS.map((s, i) => (
           <div key={s.key} className="flex items-center gap-1.5 flex-1">
@@ -200,7 +264,6 @@ export default function RecommendationForm() {
         ))}
       </div>
 
-      {/* Tarjeta de pregunta */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
         <div className="flex items-start gap-3">
           <span className="text-3xl">{current.icon}</span>

@@ -1,5 +1,26 @@
 import { PROLOG_CODE, MAX_SCORE } from "./prologCode";
 
+export type Motor = "SWI-Prolog" | "tau-prolog";
+
+async function trySwiplApi(
+  objetivo: string, clima: string, espacio: string,
+  presupuesto: string, experiencia: string
+): Promise<{ results: { raza: string; total: number }[]; motor: Motor } | null> {
+  try {
+    const res = await fetch("/api/prolog", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ objetivo, clima, espacio, presupuesto, experiencia }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.results?.length) return null;
+    return { results: data.results, motor: "SWI-Prolog" };
+  } catch {
+    return null;
+  }
+}
+
 export interface BreedInfo {
   nombre: string;
   descripcion: string;
@@ -17,6 +38,7 @@ export interface RecommendResult {
   raza: string;
   total: number;
   maxScore: number;
+  motor: Motor;
   info: BreedInfo;
 }
 
@@ -173,6 +195,20 @@ export async function getRecommendations(
   presupuesto: string,
   experiencia: string
 ): Promise<RecommendResult[]> {
+  // Try SWI-Prolog via API route first
+  const swiResult = await trySwiplApi(objetivo, clima, espacio, presupuesto, experiencia);
+  const motor: Motor = swiResult ? "SWI-Prolog" : "tau-prolog";
+
+  if (swiResult) {
+    return swiResult.results
+      .map(({ raza, total }) => {
+        const info = BREED_DATA[raza];
+        return info ? { raza, total, maxScore: MAX_SCORE, motor, info } : null;
+      })
+      .filter(Boolean) as RecommendResult[];
+  }
+
+  // Fallback: tau-prolog (browser)
   const pl = await getProlog();
 
   return new Promise((resolve, reject) => {
@@ -196,6 +232,7 @@ export async function getRecommendations(
                         raza: binding.raza,
                         total: binding.total,
                         maxScore: MAX_SCORE,
+                        motor,
                         info,
                       });
                     }
