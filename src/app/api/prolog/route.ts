@@ -4,6 +4,15 @@ import { writeFileSync, unlinkSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import { PROLOG_CODE } from "@/lib/prologCode";
+import { createClient } from "@/lib/supabase/server";
+
+const VALID = {
+  objetivo:    new Set(["huevo", "carne", "doble_proposito"]),
+  clima:       new Set(["calido_humedo", "calido_seco", "templado"]),
+  espacio:     new Set(["pequeno", "mediano", "grande"]),
+  presupuesto: new Set(["bajo", "medio", "alto"]),
+  experiencia: new Set(["principiante", "intermedio", "experto"]),
+} as const;
 
 const SWIPL_PATHS = [
   "swipl",
@@ -70,8 +79,24 @@ function runSwipl(
 }
 
 export async function POST(req: NextRequest) {
-  const { objetivo, clima, espacio, presupuesto, experiencia } =
-    await req.json();
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const body = await req.json();
+
+  for (const [key, validSet] of Object.entries(VALID)) {
+    if (!(validSet as Set<string>).has(body[key])) {
+      return NextResponse.json(
+        { error: `Valor invalido para: ${key}` },
+        { status: 400 }
+      );
+    }
+  }
+
+  const { objetivo, clima, espacio, presupuesto, experiencia } = body;
 
   const plContent = buildQuery(objetivo, clima, espacio, presupuesto, experiencia);
   const tmpFile = join(tmpdir(), `aves_${Date.now()}.pl`);
@@ -83,10 +108,10 @@ export async function POST(req: NextRequest) {
       results: results.sort((a, b) => b.total - a.total),
       motor: "SWI-Prolog",
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
-      { error: String(err), motor: null },
-      { status: 500 }
+      { error: "Motor de inferencia no disponible en este momento." },
+      { status: 503 }
     );
   } finally {
     try { unlinkSync(tmpFile); } catch {}

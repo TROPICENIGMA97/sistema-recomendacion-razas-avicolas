@@ -4,6 +4,12 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { BREED_DATA } from "@/lib/prologEngine";
 
+interface StoredResult {
+  raza: string;
+  total: number;
+  motor?: string;
+}
+
 interface Rec {
   id: string;
   objetivo: string;
@@ -11,7 +17,7 @@ interface Rec {
   espacio: string;
   presupuesto: string;
   experiencia: string;
-  resultados: any[];
+  resultados: StoredResult[];
   motor: string;
   notas: string;
   created_at: string;
@@ -33,15 +39,23 @@ export default function RecommendHistory({
   const [editId, setEditId] = useState<string | null>(null);
   const [notaEdit, setNotaEdit] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [opError, setOpError] = useState<string | null>(null);
 
   async function deleteRec(id: string) {
     if (!confirm("Eliminar esta recomendacion?")) return;
-    await supabase.from("recommendations").delete().eq("id", id);
+    const { error } = await supabase.from("recommendations").delete().eq("id", id);
+    if (error) { setOpError("No se pudo eliminar. Intente de nuevo."); return; }
+    setOpError(null);
     setRecs((r) => r.filter((x) => x.id !== id));
   }
 
   async function saveNota(id: string) {
-    await supabase.from("recommendations").update({ notas: notaEdit }).eq("id", id);
+    const { error } = await supabase
+      .from("recommendations")
+      .update({ notas: notaEdit })
+      .eq("id", id);
+    if (error) { setOpError("No se pudo guardar la nota. Intente de nuevo."); return; }
+    setOpError(null);
     setRecs((r) => r.map((x) => (x.id === id ? { ...x, notas: notaEdit } : x)));
     setEditId(null);
   }
@@ -58,6 +72,12 @@ export default function RecommendHistory({
 
   return (
     <div className="space-y-3">
+      {opError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-sm flex items-center justify-between">
+          <span>{opError}</span>
+          <button onClick={() => setOpError(null)} className="text-red-400 hover:text-red-600 font-bold ml-4">✕</button>
+        </div>
+      )}
       {recs.map((rec) => {
         const top = rec.resultados?.[0];
         const breed = top ? BREED_DATA[top.raza] : null;
