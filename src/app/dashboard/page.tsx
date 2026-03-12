@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import NavBar from "@/components/NavBar";
 import RecommendHistory from "@/components/RecommendHistory";
+import ValidationPanel from "@/components/ValidationPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,9 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-[#f6fbf0]">
       <NavBar email={user.email} nombre={nombre} />
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+
+        {/* Encabezado */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-black text-campo-900">
@@ -52,6 +55,7 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
+        {/* Stats */}
         <div className="grid sm:grid-cols-3 gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-campo-100 flex items-center justify-center text-2xl shrink-0">
@@ -76,13 +80,9 @@ export default async function DashboardPage() {
               <p className="text-2xl font-black text-campo-900">
                 {reviewCount ?? 0}
               </p>
-              <p className="text-sm text-gray-500">
-                Opiniones en comunidad
-              </p>
+              <p className="text-sm text-gray-500">Opiniones comunidad</p>
             </div>
-            <span className="text-campo-400 group-hover:text-campo-600 transition-colors">
-              →
-            </span>
+            <span className="text-campo-400 group-hover:text-campo-600 transition-colors">→</span>
           </Link>
 
           <Link
@@ -93,22 +93,38 @@ export default async function DashboardPage() {
               🐔
             </div>
             <div>
-              <p className="text-white font-black text-sm leading-tight">
-                Nueva recomendacion
-              </p>
-              <p className="text-campo-300 text-xs mt-0.5">
-                Motor Prolog activo
-              </p>
+              <p className="text-white font-black text-sm leading-tight">Nueva recomendacion</p>
+              <p className="text-campo-300 text-xs mt-0.5">Motor Prolog activo</p>
             </div>
           </Link>
         </div>
 
-        <div>
+        {/* Historial CRUD */}
+        <section>
           <h2 className="text-lg font-black text-campo-900 mb-4">
             Historial de consultas
           </h2>
           <RecommendHistory initial={recs ?? []} userId={user.id} />
-        </div>
+        </section>
+
+        {/* Validacion del sistema — OE6 */}
+        <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <div className="flex items-center gap-3 mb-1">
+            <span className="text-2xl">🔬</span>
+            <div>
+              <h2 className="text-lg font-black text-campo-900">
+                Validacion del sistema
+              </h2>
+              <p className="text-xs text-gray-400">
+                Objetivo especifico 6 — Evaluacion de desempeno y precision del motor Prolog
+              </p>
+            </div>
+          </div>
+          <div className="mt-5">
+            <ValidationPanel />
+          </div>
+        </section>
+
       </main>
     </div>
   );

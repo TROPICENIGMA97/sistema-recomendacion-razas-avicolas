@@ -1,6 +1,6 @@
 -- =============================================
--- Tabla: breed_reviews (opiniones de la comunidad)
--- Ejecutar en Supabase SQL Editor
+-- Tabla: breed_reviews (community reviews)
+-- Ejecutar en SQL Editor
 -- =============================================
 
 create table if not exists public.breed_reviews (
@@ -30,12 +30,12 @@ alter table public.breed_reviews enable row level security;
 drop policy if exists "todos_leen_resenas"        on public.breed_reviews;
 drop policy if exists "usuario_crud_propia_resena" on public.breed_reviews;
 
--- Todos los usuarios autenticados pueden leer todas las opiniones
+-- Todos los usuarios autenticados pueden leer todas las opinions
 create policy "todos_leen_resenas"
   on public.breed_reviews for select
   using (true);
 
--- Cada usuario solo puede crear/editar/eliminar sus propias opiniones
+-- Cada usuario solo puede crear/editar/eliminar sus propias opinions
 create policy "usuario_crud_propia_resena"
   on public.breed_reviews for all
   using  (auth.uid() = user_id)

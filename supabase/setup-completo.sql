@@ -71,14 +71,18 @@ alter table public.breed_reviews enable row level security;
 drop policy if exists "todos_leen_resenas"         on public.breed_reviews;
 drop policy if exists "usuario_crud_propia_resena"  on public.breed_reviews;
 
+-- Solo usuarios autenticados pueden leer opiniones (comunidad)
 create policy "todos_leen_resenas"
   on public.breed_reviews for select
+  to authenticated
   using (true);
 
+-- Cada usuario solo puede crear/editar/eliminar sus propias opiniones
 create policy "usuario_crud_propia_resena"
   on public.breed_reviews for all
-  using  (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  to authenticated
+  using  ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
 
 -- ---- VERIFICACION ----
 select table_name, row_security
